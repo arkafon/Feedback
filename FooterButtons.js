@@ -1,5 +1,4 @@
 import React from 'react';
-import map from 'ramda/src/map';
 import PropTypes from 'prop-types';
 import Button from 'Components/core/Button';
 import useFooterHook from './hooks/footerHook.js';
@@ -30,7 +29,7 @@ const FooterButtons = ({ onClose }) => {
         onClose();
     };
 
-    const buttons = {
+    const buttonsConfig = {
         surveyDone: [
             {
                 text: 'Закрыть',
@@ -58,12 +57,9 @@ const FooterButtons = ({ onClose }) => {
         ],
     };
 
-    const getButtonsGroup = map(
+    const buttons = buttonsConfig[isSurveyDone ? 'surveyDone' : 'surveyInProgress'];
+    const Buttons = buttons.map(
         el => <Button key={el.text} {...el} submit />
-    );
-
-    const Buttons = getButtonsGroup(
-        buttons[isSurveyDone ? 'surveyDone' : 'surveyInProgress']
     );
 
     return (

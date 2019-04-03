@@ -6,7 +6,7 @@ import {
     Question,
     Title,
     Description,
-} from './QuestionsList.styled';
+} from './Feedback.styled';
 import useQuestionsHook from './hooks/questionsHook';
 
 

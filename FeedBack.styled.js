@@ -22,19 +22,6 @@ export const Container = styled.div`
     z-index: 100;
 `;
 
-export const Overlay = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    z-index: 50;
-`;
-
 export const Header = styled.div`
     text-align: center;
     border-bottom: 1px solid #e5e5e5;

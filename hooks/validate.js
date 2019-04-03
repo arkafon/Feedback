@@ -1,15 +1,11 @@
-import reduce from 'ramda/src/reduce';
-import find from 'ramda/src/find';
-import filter from 'ramda/src/filter';
-import propEq from 'ramda/src/propEq';
 import * as Dict from './dict';
 
 
 const isEnougthRate = rate => (rate.Rate / rate.MaxRate >= 0.8);
 const ratesSum = (acc, rate) => acc + Number(rate.Rate);
-const getRatesTotal = reduce(ratesSum, 0);
-const getRatesHasNull = find(propEq('Rate', 0));
-const getRatesHasEnougthRate = filter(isEnougthRate);
+const getRatesTotal = rates => rates.reduce(ratesSum, 0);
+const getRatesHasNull = rates => rates.find(i => i.Rate === 0);
+const getRatesHasEnougthRate = rates => rates.filter(isEnougthRate);
 
 const validate = (questions) => {
     const rates = questions.headItems || [];

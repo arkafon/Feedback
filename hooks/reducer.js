@@ -1,45 +1,99 @@
-import * as R from 'ramda';
+import { combineReducers } from 'redux'; // опционально (см. ниже)
 
 
-const reducer = (state, { type, payload }) => {
+const ratingReducer = (state = {}, { type, payload }) => {
+    if (type === 'CHANGE_RATING') {
+        const { id, rate } = payload;
+
+        return {
+            ...state,
+            [id]: rate,
+        };
+    }
+
+    return state;
+};
+
+const isLoadedReducer = (state = false, { type }) => {
     if (
         type === 'FETCH' ||
         type === 'FETCH_FAIL'
     ) {
-        return {
-            ...state,
-            isLoaded: false,
-        };
+        return false;
+    }
+
+    if (type === 'FETCH_SUCCESS') {
+        return true;
+    }
+
+    return state;
+};
+
+const isSendingReducer = (state = false, { type }) => {
+    if (type === 'SENDING') {
+        return true;
+    }
+
+    if (type === 'SENT') {
+        return false;
+    }
+
+    return state;
+};
+
+const isVisibleReducer = (state = false, { type, payload }) => {
+    if (type === 'RATE_LATER') {
+        return false;
     }
 
     if (type === 'FETCH_SUCCESS') {
         const { data, isForced } = payload;
         const hasNotPassed = data.Status === '' || isForced;
 
+        return hasNotPassed && !!data.headItems.results.length;
+    }
+
+    return state;
+};
+
+const isSurveyDoneReducer = (state = false, { type }) => {
+    if (type === 'SET_SURVEY_DONE') {
+        return true;
+    }
+
+    return state;
+};
+
+const messageReducer = (state = '', { type, payload }) => {
+    if (type === 'SET_MESSAGE') {
+        return payload;
+    }
+
+    return state;
+};
+
+const questionsReducer = (state = { headItems: [] }, { type, payload }) => {
+    if (type === 'FETCH_SUCCESS') {
+        const { data } = payload;
+
         return {
-            ...state,
-            questions: {
-                ...data,
-                headItems: data.headItems.results,
-            },
-            isLoaded: true,
-            isVisible: hasNotPassed && !!data.headItems.results.length,
+            ...data,
+            headItems: data.headItems.results,
         };
     }
 
-    if (type === 'RATE_LATER') {
+    if (type === 'SET_COMMENTS') {
         return {
             ...state,
-            isVisible: false,
+            Comments: payload,
         };
     }
 
     if (type === 'CHANGE_RATING') {
         const { id, rate } = payload;
-        const { rating } = state;
-        const { headItems } = state.questions;
+        const { headItems } = state;
 
-        const newHeadItems = R.map((item) => {
+        const newHeadItems = headItems.map((item) => {
             if (item.CritId === id) {
                 return {
                     ...item,
@@ -48,60 +102,35 @@ const reducer = (state, { type, payload }) => {
             }
 
             return item;
-        }, headItems);
-
-        rating[id] = rate;
+        });
 
         return {
             ...state,
-            rating,
-            questions: {
-                ...state.questions,
-                headItems: newHeadItems,
-            },
-        };
-    }
-
-    if (type === 'SET_SURVEY_DONE') {
-        return {
-            ...state,
-            isSurveyDone: true,
-        };
-    }
-
-    if (type === 'SENDING') {
-        return {
-            ...state,
-            isSending: true,
-        };
-    }
-
-    if (type === 'SENT') {
-        return {
-            ...state,
-            isSending: false,
-        };
-    }
-
-    if (type === 'SET_MESSAGE') {
-        return {
-            ...state,
-            message: payload,
-        };
-    }
-
-    if (type === 'SET_COMMENTS') {
-        const { questions } = state;
-
-        questions.Comments = payload;
-
-        return {
-            ...state,
-            questions,
+            headItems: newHeadItems,
         };
     }
 
     return state;
 };
 
-export default reducer;
+// без redux:
+//
+// export default (state = initialState, action) => ({
+//     rating: ratingReducer(state.rating, action),
+//     isLoaded: isLoadedReducer(state.isLoaded, action),
+//     isSending: isSendingReducer(state.isSending, action),
+//     isVisible: isVisibleReducer(state.isVisible, action),
+//     isSurveyDone: isSurveyDoneReducer(state.isSurveyDone, action),
+//     message: messageReducer(state.message, action),
+//     questions: questionsReducer(state.questions, action),
+// });
+
+export default combineReducers({
+    rating: ratingReducer,
+    isLoaded: isLoadedReducer,
+    isSending: isSendingReducer,
+    isVisible: isVisibleReducer,
+    isSurveyDone: isSurveyDoneReducer,
+    message: messageReducer,
+    questions: questionsReducer,
+});

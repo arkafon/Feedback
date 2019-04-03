@@ -5,20 +5,8 @@ import * as Dict from './dict';
 import reducer from './reducer';
 
 
-const init = () => ({
-    rating: {},
-    isLoaded: false,
-    isSending: false,
-    isVisible: false,
-    isSurveyDone: false,
-    message: '',
-    questions: {
-        headItems: [],
-    },
-});
-
 export const useFeedback = (appId, isForced) => {
-    const [state, dispatch] = useReducer(reducer, {}, init);
+    const [state, dispatch] = useReducer(reducer, {});
 
     useEffect(() => {
         dispatch(Action.fetch());

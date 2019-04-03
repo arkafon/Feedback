@@ -7,10 +7,8 @@ import {
 } from './hooks/context';
 import {
     Container,
-    Overlay,
     Content,
     ScrollableArea,
-
 } from './Feedback.styled';
 import Head from './Head';
 import Message from './Message';
@@ -42,25 +40,23 @@ const Feedback = ({ appId, isForced, onClose }) => {
     if (!isLoaded || !isVisible) return null;
 
     return (
-        <Overlay>
-            <Container>
-                <FeedbackState.Provider value={state}>
-                    <FeedbackDispatch.Provider value={dispatch}>
-                        <Head />
-                        <Message />
-                        { !isSurveyDone &&
-                            <ScrollableArea isSending={isSending}>
-                                <Content>
-                                    <QuestionsList />
-                                    <CommentBlock />
-                                </Content>
-                            </ScrollableArea>
-                        }
-                        <FooterButtons onClose={onClose} />
-                    </FeedbackDispatch.Provider>
-                </FeedbackState.Provider>
-            </Container>
-        </Overlay>
+        <Container>
+            <FeedbackState.Provider value={state}>
+                <FeedbackDispatch.Provider value={dispatch}>
+                    <Head />
+                    <Message />
+                    { !isSurveyDone &&
+                        <ScrollableArea isSending={isSending}>
+                            <Content>
+                                <QuestionsList />
+                                <CommentBlock />
+                            </Content>
+                        </ScrollableArea>
+                    }
+                    <FooterButtons onClose={onClose} />
+                </FeedbackDispatch.Provider>
+            </FeedbackState.Provider>
+        </Container>
     );
 };
 
